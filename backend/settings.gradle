@@ -1,0 +1,3 @@
+rootProject.name = 'siberian-spruce'
+
+include 'account-service'
