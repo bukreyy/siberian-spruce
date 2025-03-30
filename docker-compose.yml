@@ -1,0 +1,16 @@
+services:
+  postgres-account:
+    image: postgres:17.4
+    container_name: postgres-account
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: siberian_spruce_account_db
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+    volumes:
+      - postgres_account_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_account_data:
