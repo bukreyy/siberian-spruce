@@ -23,5 +23,21 @@ subprojects {
         compileOnly {
             extendsFrom annotationProcessor
         }
+        testCompileOnly {
+            extendsFrom testAnnotationProcessor
+        }
+    }
+
+    dependencies {
+        // MapStruct
+        implementation 'org.mapstruct:mapstruct'
+        annotationProcessor 'org.mapstruct:mapstruct-processor'
+
+        // Lombok
+        compileOnly 'org.projectlombok:lombok'
+        annotationProcessor 'org.projectlombok:lombok'
+
+        // Binding for Lombok + MapStruct compatibility
+        implementation 'org.projectlombok:lombok-mapstruct-binding'
     }
 }

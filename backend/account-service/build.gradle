@@ -7,9 +7,6 @@ dependencies {
 
 	implementation 'org.flywaydb:flyway-database-postgresql:11.5.0'
 
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
-
 	runtimeOnly 'org.postgresql:postgresql'
 
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
