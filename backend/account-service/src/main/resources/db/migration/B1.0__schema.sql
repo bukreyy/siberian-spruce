@@ -1,3 +1,6 @@
+DROP TABLE IF EXISTS users CASCADE;
+DROP TABLE IF EXISTS role_dict CASCADE;
+
 CREATE TABLE users
 (
     user_id     BIGSERIAL    NOT NULL,
