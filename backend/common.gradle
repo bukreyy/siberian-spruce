@@ -30,14 +30,14 @@ subprojects {
 
     dependencies {
         // MapStruct
-        implementation 'org.mapstruct:mapstruct'
-        annotationProcessor 'org.mapstruct:mapstruct-processor'
+        implementation 'org.mapstruct:mapstruct:1.6.3'
+        annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.3'
 
         // Lombok
-        compileOnly 'org.projectlombok:lombok'
-        annotationProcessor 'org.projectlombok:lombok'
+        compileOnly 'org.projectlombok:lombok:1.18.38'
+        annotationProcessor 'org.projectlombok:lombok:1.18.38'
 
         // Binding for Lombok + MapStruct compatibility
-        implementation 'org.projectlombok:lombok-mapstruct-binding'
+        implementation 'org.projectlombok:lombok-mapstruct-binding:0.1.0'
     }
 }
