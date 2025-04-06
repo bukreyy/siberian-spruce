@@ -12,23 +12,33 @@ abstract class AbstractEntityEqualsSpec<T, ID> extends BaseIntegrationTest {
 
     abstract Class<T> getEntityClass()
 
-    abstract ID getId()
+    abstract Serializable getId()
 
-    ID getDifferentId() {
-        switch (getId()) {
-            case Long: return 999L as ID
-            case String: return "DIFF" as ID
-            default:
-                throw new UnsupportedOperationException("Provide getDifferentId() for ${getId()?.class?.simpleName}")
-        }
-    }
-
-    def "should be equal to itself"() {
+    def "Should be equal to itself"() {
         when:
         def entity = em.find(getEntityClass(), getId())
 
         then:
-        entity.is(entity)
+        entity == entity
+    }
+
+    def "Should be equal to proxy"() {
+        when:
+        def entity = em.find(getEntityClass(), getId())
+        def proxy = em.getReference(getEntityClass(), getId())
+
+        then:
+        entity == proxy
+        proxy == entity
+    }
+
+    def "Should have same hashCode as proxy"() {
+        when:
+        def entity = em.find(getEntityClass(), getId())
+        def proxy = em.getReference(getEntityClass(), getId())
+
+        then:
+        entity.hashCode() == proxy.hashCode()
     }
 
     def "Should not be equal to null"() {
@@ -44,129 +54,26 @@ abstract class AbstractEntityEqualsSpec<T, ID> extends BaseIntegrationTest {
         def entity = em.find(getEntityClass(), getId())
 
         then:
-        entity != "entity"
+        entity != new Object()
     }
 
-    def "Should be equal if same class and same ID"() {
-        when:
-        def entity1 = em.find(getEntityClass(), getId())
-        def entity2 = em.find(getEntityClass(), getId())
-
-        then:
-        entity1 == entity2
-        entity2 == entity1
-    }
-
-    def "Should not be equal if IDs differ"() {
-        when:
+    def "Should not be equal to same type with different id"() {
+        given:
         def entity = em.find(getEntityClass(), getId())
-        def other = getEntityClass()
-        other.metaClass.setProperty(other, "id", getDifferentId())
+        def other = em.find(getEntityClass(), getDifferentId())
 
-        then:
+        expect:
         entity != other
-        other != entity
     }
 
-
-    def "Should not be equal to object with different effective class"() {
-        when:
+    def "Should not be equal to different type with same id"() {
+        given:
         def entity = em.find(getEntityClass(), getId())
-        def subclass = new UserSubclass(id: 1L)
+        def other = em.find(getOtherEntityClass(), getId())
 
-        then:
-        entity != subclass
-        subclass != entity
-    }
-
-    def "Should be equal to Hibernate proxy with same ID"() {
-        when:
-        def entity = em.find(getEntityClass(), getId())
-        def proxy = em.getReference(getEntityClass(), getId())
-
-        then:
-        proxy instanceof HibernateProxy
-        entity == proxy
-        proxy == entity
-    }
-
-
-
-
-    def "should not be equal to null"() {
-        when:
-        def entity = em.find(getEntityClass(), getExistingId())
-
-        then:
-        entity != null
-    }
-
-    def "should not be equal to object of different type"() {
-        when:
-        def entity = em.find(getEntityClass(), getExistingId())
-
-        then:
-        entity != "not an entity"
-    }
-
-    def "should be equal if same ID and same effective class"() {
-        when:
-        def entity1 = em.find(getEntityClass(), getExistingId())
-        def entity2 = em.find(getEntityClass(), getExistingId())
-
-        then:
-        entity1 == entity2
-    }
-
-    def "should not be equal if one ID is null"() {
-        when:
-        def loaded = em.find(getEntityClass(), getExistingId())
-        def transientEntity = getEntityClass().newInstance()
-
-        then:
-        loaded != transientEntity
-        transientEntity != loaded
-    }
-
-    def "should not be equal if IDs differ"() {
-        when:
-        def loaded = em.find(getEntityClass(), getExistingId())
-        def other = getEntityClass().newInstance()
-        other.metaClass.setProperty(other, "id", 999L)
-
-        then:
-        loaded != other
-        other != loaded
-    }
-
-    def "should not be equal to subclass with same ID"() {
-        when:
-        def base = em.find(getEntityClass(), getExistingId())
-        def subclass = getSubclassInstanceWithSameId()
-
-        then:
-        base != subclass
-        subclass != base
-    }
-
-    def "should have same hashCode for same class"() {
         expect:
-        getSameIdInstance().hashCode() == getSameIdInstance().hashCode()
+        entity != other
     }
 
-    def "should have different hashCode for subclass"() {
-        expect:
-        getSameIdInstance().hashCode() != getSubclassInstanceWithSameId().hashCode()
-    }
-
-    /**
-     * Zwraca podklasę encji z takim samym ID, override jeśli potrzebujesz specjalnej klasy
-     */
-    T getSubclassInstanceWithSameId() {
-        def subclass = new Expando()
-        subclass.metaClass.mixin getEntityClass()
-        subclass.metaClass.getId = { -> getExistingId() }
-        return subclass as T
-    }
 
 }

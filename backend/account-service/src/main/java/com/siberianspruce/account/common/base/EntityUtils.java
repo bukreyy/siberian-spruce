@@ -12,7 +12,8 @@ public final class EntityUtils {
         if (self == other) return true;
         if (other == null) return false;
         if (!(other instanceof IdentifiableEntity otherEntity)) return false;
-        if (!getEffectiveClass(self).equals(getEffectiveClass(otherEntity))) return false;
+        if (getEffectiveClass(self) != getEffectiveClass(otherEntity)) return false;
+
         return Objects.equals(self.getId(), otherEntity.getId());
     }
 
