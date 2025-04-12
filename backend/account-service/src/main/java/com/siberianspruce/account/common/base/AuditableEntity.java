@@ -17,8 +17,8 @@ public abstract class AuditableEntity implements IdentifiableEntity {
     @Column(name = "created_at", nullable = false, updatable = false)
     private OffsetDateTime createdAt;
 
-    @Column(name = "updated_at", nullable = false)
-    private OffsetDateTime updatedAt;
+    @Column(name = "modified_at", nullable = false)
+    private OffsetDateTime modified_at;
 
     @PrePersist
     protected void onCreate() {
@@ -27,7 +27,7 @@ public abstract class AuditableEntity implements IdentifiableEntity {
 
     @PreUpdate
     protected void onUpdate() {
-        this.updatedAt = OffsetDateTime.now();
+        this.modified_at = OffsetDateTime.now();
     }
 
 }

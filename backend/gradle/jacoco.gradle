@@ -1,0 +1,29 @@
+jacoco {
+    toolVersion = "0.8.12"
+}
+
+jacocoTestReport {
+    reports {
+        xml.required = true
+        html.required = true
+        csv.required = false
+    }
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.8
+            }
+        }
+    }
+}
+
+check.dependsOn jacocoTestCoverageVerification
+
+tasks.register('coverage') {
+    group = 'verification'
+    description = 'Run tests and generate JaCoCo HTML and XML coverage reports'
+    dependsOn 'clean', 'test', 'jacocoTestReport'
+}
